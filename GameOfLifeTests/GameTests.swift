@@ -22,7 +22,7 @@ struct Game {
     }
     
     enum Error: Swift.Error {
-        case someError
+        case cellIndexOutsideGameBounds
     }
     
     var area: Int
@@ -37,7 +37,7 @@ struct Game {
     }
     
     func cell(at index: Game.CellIndex) throws {
-        throw Game.Error.someError
+        throw Game.Error.cellIndexOutsideGameBounds
     }
     
 }
@@ -71,7 +71,9 @@ class GameTests: XCTestCase {
         let height = 5
         let game = Game(width: width, height: height)
         
-        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width + 1, y: height + 1)))
+        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width + 1, y: height + 1))) { (error) in
+            XCTAssertEqual((error as? Game.Error), .cellIndexOutsideGameBounds)
+        }
     }
     
 }
