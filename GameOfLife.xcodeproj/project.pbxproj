@@ -12,7 +12,7 @@
 		6ED013941EC2638000E1A4A4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6ED013921EC2638000E1A4A4 /* Main.storyboard */; };
 		6ED013961EC2638000E1A4A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6ED013951EC2638000E1A4A4 /* Assets.xcassets */; };
 		6ED013991EC2638000E1A4A4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6ED013971EC2638000E1A4A4 /* LaunchScreen.storyboard */; };
-		6ED013A41EC2638000E1A4A4 /* GameOfLifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED013A31EC2638000E1A4A4 /* GameOfLifeTests.swift */; };
+		6ED013AF1EC2644300E1A4A4 /* GameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED013AE1EC2644300E1A4A4 /* GameTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,8 +34,8 @@
 		6ED013981EC2638000E1A4A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6ED0139A1EC2638000E1A4A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6ED0139F1EC2638000E1A4A4 /* GameOfLifeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameOfLifeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6ED013A31EC2638000E1A4A4 /* GameOfLifeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOfLifeTests.swift; sourceTree = "<group>"; };
 		6ED013A51EC2638000E1A4A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6ED013AE1EC2644300E1A4A4 /* GameTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,8 +90,8 @@
 		6ED013A21EC2638000E1A4A4 /* GameOfLifeTests */ = {
 			isa = PBXGroup;
 			children = (
-				6ED013A31EC2638000E1A4A4 /* GameOfLifeTests.swift */,
 				6ED013A51EC2638000E1A4A4 /* Info.plist */,
+				6ED013AE1EC2644300E1A4A4 /* GameTests.swift */,
 			);
 			path = GameOfLifeTests;
 			sourceTree = "<group>";
@@ -150,6 +150,7 @@
 					};
 					6ED0139E1EC2638000E1A4A4 = {
 						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 6ED0138A1EC2638000E1A4A4;
 					};
@@ -208,7 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6ED013A41EC2638000E1A4A4 /* GameOfLifeTests.swift in Sources */,
+				6ED013AF1EC2644300E1A4A4 /* GameTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,10 +365,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = GameOfLifeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = uk.org.shez.GameOfLifeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GameOfLife.app/GameOfLife";
 			};
@@ -378,6 +381,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = GameOfLifeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = uk.org.shez.GameOfLifeTests;
