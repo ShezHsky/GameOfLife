@@ -12,8 +12,8 @@ import XCTest
 struct Game {
     
     var area: Int
-    var width = 0
-    var height = 0
+    var width: Int
+    var height: Int
     
     init(width: Int, height: Int) {
         self.width = width
