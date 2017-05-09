@@ -11,10 +11,10 @@ import XCTest
 
 struct Game {
     
-    var area = 100
+    var area: Int
     
-    init(width: Any, height: Any) {
-        
+    init(width: Int, height: Int) {
+        area = width * height
     }
     
 }
@@ -22,8 +22,8 @@ struct Game {
 class GameTests: XCTestCase {
     
     func testTheGameAreaIsAsExpected() {
-        let width = 10
-        let height = 10
+        let width = Int(arc4random_uniform(100))
+        let height = Int(arc4random_uniform(100))
         let game = Game(width: width, height: height)
         
         XCTAssertEqual(width * height, game.area)
