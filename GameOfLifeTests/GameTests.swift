@@ -66,12 +66,12 @@ class GameTests: XCTestCase {
         XCTAssertEqual(height, game.height)
     }
     
-    func testThrowsErrorWhenAccessingCellNotWithinGameArea() {
+    func testThrowsErrorWhenAccessingCellNotWithinGameWidth() {
         let width = 5
         let height = 5
         let game = Game(width: width, height: height)
         
-        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width + 1, y: height + 1))) { (error) in
+        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width, y: height - 1))) { (error) in
             XCTAssertEqual((error as? Game.Error), .cellIndexOutsideGameBounds)
         }
     }
