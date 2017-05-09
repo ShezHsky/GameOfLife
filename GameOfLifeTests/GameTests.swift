@@ -37,7 +37,7 @@ struct Game {
     }
     
     func cell(at index: Game.CellIndex) throws {
-        guard index.x < width else {
+        guard index.x < width, index.y < height else {
             throw Game.Error.cellIndexOutsideGameBounds
         }
     }
@@ -88,6 +88,16 @@ class GameTests: XCTestCase {
         }
         catch {
             XCTFail()
+        }
+    }
+    
+    func testThrowsErrorWhenAccessingCellNotWithinGameHeight() {
+        let width = 5
+        let height = 5
+        let game = Game(width: width, height: height)
+        
+        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width - 1, y: height))) { (error) in
+            XCTAssertEqual((error as? Game.Error), .cellIndexOutsideGameBounds)
         }
     }
     
