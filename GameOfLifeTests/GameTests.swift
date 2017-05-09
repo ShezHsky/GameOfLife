@@ -37,9 +37,13 @@ struct Game {
     }
     
     func cell(at index: Game.CellIndex) throws {
-        guard index.x < width, index.y < height else {
+        guard isValidCellIndex(index) else {
             throw Game.Error.cellIndexOutsideGameBounds
         }
+    }
+    
+    private func isValidCellIndex(_ index: Game.CellIndex) -> Bool {
+        return index.x < width && index.y < height
     }
     
 }
