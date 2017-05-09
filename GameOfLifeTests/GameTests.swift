@@ -13,9 +13,12 @@ struct Game {
     
     var area: Int
     var width = 0
+    var height = 0
     
     init(width: Int, height: Int) {
         self.width = width
+        self.height = height
+        
         area = width * height
     }
     
@@ -36,6 +39,13 @@ class GameTests: XCTestCase {
         let game = Game(width: width, height: 0)
         
         XCTAssertEqual(width, game.width)
+    }
+    
+    func testTheGameHeightIsAsExpected() {
+        let height = Int(arc4random_uniform(100))
+        let game = Game(width: 0, height: height)
+        
+        XCTAssertEqual(height, game.height)
     }
     
 }
