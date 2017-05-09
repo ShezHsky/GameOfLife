@@ -11,6 +11,12 @@ import XCTest
 
 struct Game {
     
+    struct Cell {
+        
+        var isAlive = false
+        
+    }
+    
     struct CellIndex {
         var x: Int
         var y: Int
@@ -36,10 +42,12 @@ struct Game {
         area = width * height
     }
     
-    func cell(at index: Game.CellIndex) throws {
+    func cell(at index: Game.CellIndex) throws -> Game.Cell {
         guard isValidCellIndex(index) else {
             throw Game.Error.cellIndexOutsideGameBounds
         }
+        
+        return Cell()
     }
     
     private func isValidCellIndex(_ index: Game.CellIndex) -> Bool {
@@ -102,6 +110,19 @@ class GameTests: XCTestCase {
         
         XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width - 1, y: height))) { (error) in
             XCTAssertEqual((error as? Game.Error), .cellIndexOutsideGameBounds)
+        }
+    }
+    
+    func testAllCellsAtTheStartOfTheGameShouldBeDead() {
+        let width = 5
+        let height = 5
+        let game = Game(width: width, height: height)
+        
+        (0..<width).forEach { (x) in
+            (0..<height).forEach { (y) in
+                let cell = try? game.cell(at: Game.CellIndex(x: x, y: y))
+                XCTAssertEqual(cell?.isAlive, false)
+            }
         }
     }
     
