@@ -41,10 +41,6 @@ struct Game {
         
     }
     
-    enum Error: Swift.Error {
-        case cellIndexOutsideGameBounds
-    }
-    
     var area: Int
     var width: Int
     var height: Int
@@ -66,20 +62,22 @@ struct Game {
         }
     }
     
-    func cell(at index: Game.CellIndex) throws -> Game.Cell {
-        guard let cell = cells.first(where: { $0.index == index }) else {
-            throw Game.Error.cellIndexOutsideGameBounds
-        }
-        
-        return cell
+    func cell(at index: Game.CellIndex) -> Game.Cell {
+        precondition(isValidIndex(index))
+        return cells.first(where: { $0.index == index })!
     }
     
     mutating func toggleCell(at index: Game.CellIndex) {
-        guard let index = cells.index(where: { $0.index == index }) else { return }
-        
+        precondition(isValidIndex(index))
+
+        let index = cells.index(where: { $0.index == index })!
         var cell = cells[index]
         cell.toggleLiveState()
         cells[index] = cell
+    }
+
+    private func isValidIndex(_ index: Game.CellIndex) -> Bool {
+        return index.x < width && index.y < height
     }
     
 }
@@ -108,39 +106,6 @@ class GameTests: XCTestCase {
         XCTAssertEqual(height, game.height)
     }
     
-    func testThrowsErrorWhenAccessingCellNotWithinGameWidth() {
-        let width = 5
-        let height = 5
-        let game = Game(width: width, height: height)
-        
-        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width, y: height - 1))) { (error) in
-            XCTAssertEqual((error as? Game.Error), .cellIndexOutsideGameBounds)
-        }
-    }
-    
-    func testDoesNotThrowErrorWhenAccessingCellWithinGameWidth() {
-        let width = 5
-        let height = 5
-        let game = Game(width: width, height: height)
-        
-        do {
-            _ = try game.cell(at: Game.CellIndex(x: width - 1, y: height - 1))
-        }
-        catch {
-            XCTFail()
-        }
-    }
-    
-    func testThrowsErrorWhenAccessingCellNotWithinGameHeight() {
-        let width = 5
-        let height = 5
-        let game = Game(width: width, height: height)
-        
-        XCTAssertThrowsError(try game.cell(at: Game.CellIndex(x: width - 1, y: height))) { (error) in
-            XCTAssertEqual((error as? Game.Error), .cellIndexOutsideGameBounds)
-        }
-    }
-    
     func testAllCellsAtTheStartOfTheGameShouldBeDead() {
         let width = 5
         let height = 5
@@ -148,8 +113,8 @@ class GameTests: XCTestCase {
         
         (0..<width).forEach { (x) in
             (0..<height).forEach { (y) in
-                let cell = try? game.cell(at: Game.CellIndex(x: x, y: y))
-                XCTAssertEqual(cell?.isAlive, false)
+                let cell = game.cell(at: Game.CellIndex(x: x, y: y))
+                XCTAssertEqual(cell.isAlive, false)
             }
         }
     }
@@ -161,7 +126,7 @@ class GameTests: XCTestCase {
         let index = Game.CellIndex(x: 3, y: 3)
         game.toggleCell(at: index)
         
-        XCTAssertEqual(true, (try? game.cell(at: index))?.isAlive)
+        XCTAssertEqual(true, game.cell(at: index).isAlive)
     }
     
     func testTogglingSingleCellDoesNotAffectOtherCells() {
@@ -171,7 +136,7 @@ class GameTests: XCTestCase {
         let index = Game.CellIndex(x: 0, y: 0)
         game.toggleCell(at: index)
         
-        XCTAssertEqual(false, (try? game.cell(at: Game.CellIndex(x: 1, y: 0)))?.isAlive)
+        XCTAssertEqual(false, game.cell(at: Game.CellIndex(x: 1, y: 0)).isAlive)
     }
     
     func testAccessingCellShouldProvideItsIndex() {
@@ -179,9 +144,9 @@ class GameTests: XCTestCase {
         let height = 5
         let game = Game(width: width, height: height)
         let index = Game.CellIndex(x: 3, y: 3)
-        let cell = try? game.cell(at: index)
+        let cell = game.cell(at: index)
         
-        XCTAssertEqual(index, cell?.index)
+        XCTAssertEqual(index, cell.index)
     }
     
 }
