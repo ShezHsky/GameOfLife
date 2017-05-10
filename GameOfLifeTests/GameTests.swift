@@ -14,6 +14,7 @@ struct Game {
     struct Cell {
         
         var isAlive = false
+        var index: CellIndex
         
     }
     
@@ -55,7 +56,7 @@ struct Game {
         (0..<width).forEach { (x) in
             (0..<height).forEach { (y) in
                 let index = Game.CellIndex(x: x, y: y)
-                let cell = Cell(isAlive: false)
+                let cell = Cell(isAlive: false, index: index)
                 cells[index] = cell
             }
         }
@@ -170,6 +171,16 @@ class GameTests: XCTestCase {
         game.toggleCell(at: index)
         
         XCTAssertEqual(false, (try? game.cell(at: Game.CellIndex(x: 1, y: 0)))?.isAlive)
+    }
+    
+    func testAccessingCellShouldProvideItsIndex() {
+        let width = 5
+        let height = 5
+        let game = Game(width: width, height: height)
+        let index = Game.CellIndex(x: 3, y: 3)
+        let cell = try? game.cell(at: index)
+        
+        XCTAssertEqual(index, cell?.index)
     }
     
 }
