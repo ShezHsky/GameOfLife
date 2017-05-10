@@ -15,6 +15,10 @@ struct Game {
         
         var isAlive = false
         var index: CellIndex
+
+        mutating func toggleLiveState() {
+            isAlive = !isAlive
+        }
         
     }
     
@@ -74,7 +78,7 @@ struct Game {
         guard let index = cells.index(where: { $0.index == index }) else { return }
         
         var cell = cells[index]
-        cell.isAlive = !cell.isAlive
+        cell.toggleLiveState()
         cells[index] = cell
     }
     
