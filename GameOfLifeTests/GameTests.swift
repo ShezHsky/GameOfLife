@@ -44,7 +44,7 @@ struct Game {
     var area: Int
     var width: Int
     var height: Int
-    private var cells = [CellIndex : Cell]()
+    private var cells = [Cell]()
     private var alive = false
     
     init(width: Int, height: Int) {
@@ -57,13 +57,13 @@ struct Game {
             (0..<height).forEach { (y) in
                 let index = Game.CellIndex(x: x, y: y)
                 let cell = Cell(isAlive: false, index: index)
-                cells[index] = cell
+                cells.append(cell)
             }
         }
     }
     
     func cell(at index: Game.CellIndex) throws -> Game.Cell {
-        guard let cell = cells[index] else {
+        guard let cell = cells.first(where: { $0.index == index }) else {
             throw Game.Error.cellIndexOutsideGameBounds
         }
         
@@ -71,8 +71,9 @@ struct Game {
     }
     
     mutating func toggleCell(at index: Game.CellIndex) {
-        guard var cell = cells[index] else { return }
+        guard let index = cells.index(where: { $0.index == index }) else { return }
         
+        var cell = cells[index]
         cell.isAlive = !cell.isAlive
         cells[index] = cell
     }
