@@ -114,7 +114,7 @@ class GameTests: XCTestCase {
         (0..<width).forEach { (x) in
             (0..<height).forEach { (y) in
                 let cell = game.cell(at: Game.CellIndex(x: x, y: y))
-                XCTAssertEqual(cell.isAlive, false)
+                XCTAssertFalse(cell.isAlive)
             }
         }
     }
@@ -126,7 +126,7 @@ class GameTests: XCTestCase {
         let index = Game.CellIndex(x: 3, y: 3)
         game.toggleCell(at: index)
         
-        XCTAssertEqual(true, game.cell(at: index).isAlive)
+        XCTAssertTrue(game.cell(at: index).isAlive)
     }
     
     func testTogglingSingleCellDoesNotAffectOtherCells() {
@@ -136,7 +136,7 @@ class GameTests: XCTestCase {
         let index = Game.CellIndex(x: 0, y: 0)
         game.toggleCell(at: index)
         
-        XCTAssertEqual(false, game.cell(at: Game.CellIndex(x: 1, y: 0)).isAlive)
+        XCTAssertFalse(game.cell(at: Game.CellIndex(x: 1, y: 0)).isAlive)
     }
     
     func testAccessingCellShouldProvideItsIndex() {
