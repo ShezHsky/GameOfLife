@@ -34,6 +34,7 @@ struct Game {
     var area: Int
     var width: Int
     var height: Int
+    private var alive = false
     
     init(width: Int, height: Int) {
         self.width = width
@@ -47,7 +48,11 @@ struct Game {
             throw Game.Error.cellIndexOutsideGameBounds
         }
         
-        return Cell()
+        return Cell(isAlive: alive)
+    }
+    
+    mutating func toggleCell(at index: Game.CellIndex) {
+        alive = true
     }
     
     private func isValidCellIndex(_ index: Game.CellIndex) -> Bool {
@@ -124,6 +129,16 @@ class GameTests: XCTestCase {
                 XCTAssertEqual(cell?.isAlive, false)
             }
         }
+    }
+    
+    func testTogglingCellStateAtIndexAtTheStartOfTheGameShouldBringItToLife() {
+        let width = 5
+        let height = 5
+        var game = Game(width: width, height: height)
+        let index = Game.CellIndex(x: 3, y: 3)
+        game.toggleCell(at: index)
+        
+        XCTAssertEqual(true, (try? game.cell(at: index))?.isAlive)
     }
     
 }
