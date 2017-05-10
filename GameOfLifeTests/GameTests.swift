@@ -76,6 +76,16 @@ struct Game {
         cells[index] = cell
     }
 
+    mutating func tick() {
+        var cells = self.cells
+        for (idx, var cell) in cells.enumerated() {
+            cell.isAlive = false
+            cells[idx] = cell
+        }
+
+        self.cells = cells
+    }
+
     private func isValidIndex(_ index: Game.CellIndex) -> Bool {
         return index.x < width && index.y < height
     }
@@ -147,6 +157,17 @@ class GameTests: XCTestCase {
         let cell = game.cell(at: index)
         
         XCTAssertEqual(index, cell.index)
+    }
+
+    func testCellThatIsAliveWithoutNeighboursShouldDieWhenProceedingToNextGeneration() {
+        let width = 5
+        let height = 5
+        var game = Game(width: width, height: height)
+        let index = Game.CellIndex(x: 3, y: 3)
+        game.toggleCell(at: index)
+        game.tick()
+
+        XCTAssertFalse(game.cell(at: index).isAlive)
     }
     
 }
