@@ -78,10 +78,6 @@ struct Game {
         cells[index] = cell
     }
     
-    private func isValidCellIndex(_ index: Game.CellIndex) -> Bool {
-        return index.x < width && index.y < height
-    }
-    
 }
 
 class GameTests: XCTestCase {
