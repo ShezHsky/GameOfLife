@@ -17,7 +17,7 @@ struct Game {
         
     }
     
-    struct CellIndex {
+    struct CellIndex: Equatable, Hashable {
         var x: Int
         var y: Int
         
@@ -25,6 +25,15 @@ struct Game {
             self.x = x
             self.y = y
         }
+        
+        var hashValue: Int {
+            return x.hashValue ^ y.hashValue
+        }
+        
+        static func ==(lhs: CellIndex, rhs: CellIndex) -> Bool {
+            return lhs.x == rhs.x && lhs.y == rhs.y
+        }
+        
     }
     
     enum Error: Swift.Error {
@@ -34,6 +43,7 @@ struct Game {
     var area: Int
     var width: Int
     var height: Int
+    private var cells = [CellIndex : Cell]()
     private var alive = false
     
     init(width: Int, height: Int) {
@@ -41,18 +51,29 @@ struct Game {
         self.height = height
         
         area = width * height
+        
+        (0..<width).forEach { (x) in
+            (0..<height).forEach { (y) in
+                let index = Game.CellIndex(x: x, y: y)
+                let cell = Cell(isAlive: false)
+                cells[index] = cell
+            }
+        }
     }
     
     func cell(at index: Game.CellIndex) throws -> Game.Cell {
-        guard isValidCellIndex(index) else {
+        guard let cell = cells[index] else {
             throw Game.Error.cellIndexOutsideGameBounds
         }
         
-        return Cell(isAlive: alive)
+        return cell
     }
     
     mutating func toggleCell(at index: Game.CellIndex) {
-        alive = true
+        guard var cell = cells[index] else { return }
+        
+        cell.isAlive = !cell.isAlive
+        cells[index] = cell
     }
     
     private func isValidCellIndex(_ index: Game.CellIndex) -> Bool {
@@ -139,6 +160,16 @@ class GameTests: XCTestCase {
         game.toggleCell(at: index)
         
         XCTAssertEqual(true, (try? game.cell(at: index))?.isAlive)
+    }
+    
+    func testTogglingSingleCellDoesNotAffectOtherCells() {
+        let width = 2
+        let height = 1
+        var game = Game(width: width, height: height)
+        let index = Game.CellIndex(x: 0, y: 0)
+        game.toggleCell(at: index)
+        
+        XCTAssertEqual(false, (try? game.cell(at: Game.CellIndex(x: 1, y: 0)))?.isAlive)
     }
     
 }
