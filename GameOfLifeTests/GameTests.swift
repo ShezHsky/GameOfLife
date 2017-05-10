@@ -120,7 +120,7 @@ class GameTests: XCTestCase {
         let game = Game(width: width, height: height)
         
         do {
-            try game.cell(at: Game.CellIndex(x: width - 1, y: height - 1))
+            _ = try game.cell(at: Game.CellIndex(x: width - 1, y: height - 1))
         }
         catch {
             XCTFail()
