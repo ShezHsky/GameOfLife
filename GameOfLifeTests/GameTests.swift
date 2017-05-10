@@ -11,7 +11,7 @@ import XCTest
 
 struct Game {
     
-    struct Cell {
+    struct Cell: CustomStringConvertible, CustomDebugStringConvertible {
         
         var isAlive = false
         var index: CellIndex
@@ -19,10 +19,19 @@ struct Game {
         mutating func toggleLiveState() {
             isAlive = !isAlive
         }
+
+        var description: String {
+            let liveState = isAlive ? "Alive" : "Dead"
+            return "\(liveState): \(index)"
+        }
+
+        var debugDescription: String {
+            return description
+        }
         
     }
     
-    struct CellIndex: Equatable, Hashable {
+    struct CellIndex: Equatable, Hashable, CustomStringConvertible, CustomDebugStringConvertible {
         var x: Int
         var y: Int
         
@@ -33,6 +42,14 @@ struct Game {
         
         var hashValue: Int {
             return x.hashValue ^ y.hashValue
+        }
+
+        var description: String {
+            return "(x: \(x), y: \(y))"
+        }
+
+        var debugDescription: String {
+            return description
         }
         
         static func ==(lhs: CellIndex, rhs: CellIndex) -> Bool {
@@ -79,11 +96,26 @@ struct Game {
     mutating func tick() {
         var cells = self.cells
         for (idx, var cell) in cells.enumerated() {
-            cell.isAlive = false
+            let neighbours = neighbouringIndiciesFor(cell).map(cell(at:))
+            cell.isAlive = neighbours.filter({ $0.isAlive }).count > 0
+
             cells[idx] = cell
         }
 
         self.cells = cells
+    }
+
+    private func neighbouringIndiciesFor(_ cell: Game.Cell) -> [Game.CellIndex] {
+        let offsets = [(-1, -1), (0, -1), (1, -1),
+                       (-1, 0), /* Cell */ (1, 0),
+                       (-1, 1), (0, 1), (1, 1)]
+        return offsets.map { (offset) in
+            var index = cell.index
+            index.x = max(0, min(width - 1, index.x + offset.0))
+            index.y = max(0, min(height - 1, index.y + offset.1))
+
+            return index
+        }
     }
 
     private func isValidIndex(_ index: Game.CellIndex) -> Bool {
@@ -168,6 +200,19 @@ class GameTests: XCTestCase {
         game.tick()
 
         XCTAssertFalse(game.cell(at: index).isAlive)
+    }
+
+    func testCellThatIsAliveWithTwoNeighboursShouldLiveWhenProceedingToNextGeneration() {
+        let width = 5
+        let height = 5
+        var game = Game(width: width, height: height)
+        let index = Game.CellIndex(x: 3, y: 3)
+        game.toggleCell(at: index)
+        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
+        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
+        game.tick()
+
+        XCTAssertTrue(game.cell(at: index).isAlive)
     }
     
 }
