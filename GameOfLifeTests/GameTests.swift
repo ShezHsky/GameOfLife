@@ -13,7 +13,7 @@ struct Game {
     
     struct Cell: CustomStringConvertible, CustomDebugStringConvertible {
         
-        var isAlive = false
+        var isAlive: Bool
         var index: Index
 
         mutating func toggleLiveState() {
@@ -32,6 +32,7 @@ struct Game {
     }
     
     struct Index: Equatable, Hashable, CustomStringConvertible, CustomDebugStringConvertible {
+        
         var x: Int
         var y: Int
         
@@ -96,14 +97,17 @@ struct Game {
     mutating func tick() {
         var cells = self.cells
         for (idx, var cell) in cells.enumerated() {
-            let neighbours = neighbouringIndiciesFor(cell).map(cell(at:))
-            let liveNeighbourCount = neighbours.filter({ $0.isAlive }).count
-            cell.isAlive = (cell.isAlive && liveNeighbourCount > 1 && liveNeighbourCount < 4) || liveNeighbourCount == 3
-
+            cell.isAlive = shouldCellLiveInNextGeneration(cell)
             cells[idx] = cell
         }
 
         self.cells = cells
+    }
+    
+    private func shouldCellLiveInNextGeneration(_ cell: Game.Cell) -> Bool {
+        let neighbours = neighbouringIndiciesFor(cell).map(cell(at:))
+        let liveNeighbourCount = neighbours.filter({ $0.isAlive }).count
+        return liveNeighbourCount == 3 || (cell.isAlive && liveNeighbourCount == 2)
     }
 
     private func neighbouringIndiciesFor(_ cell: Game.Cell) -> [Game.Index] {
