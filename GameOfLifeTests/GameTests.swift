@@ -98,7 +98,7 @@ struct Game {
         for (idx, var cell) in cells.enumerated() {
             let neighbours = neighbouringIndiciesFor(cell).map(cell(at:))
             let liveNeighbourCount = neighbours.filter({ $0.isAlive }).count
-            cell.isAlive = liveNeighbourCount > 1 && liveNeighbourCount < 4
+            cell.isAlive = cell.isAlive && liveNeighbourCount > 1 && liveNeighbourCount < 4
 
             cells[idx] = cell
         }
@@ -255,6 +255,18 @@ class GameTests: XCTestCase {
         game.tick()
 
         XCTAssertTrue(game.cell(at: index).isAlive)
+    }
+    
+    func testCellThatIsDeadWithTwoLiveNeighboursShouldStayDeadWhenProceedingToTheNextGeneration() {
+        let width = 5
+        let height = 5
+        var game = Game(width: width, height: height)
+        let index = Game.CellIndex(x: 3, y: 3)
+        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
+        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
+        game.tick()
+        
+        XCTAssertFalse(game.cell(at: index).isAlive)
     }
     
 }
