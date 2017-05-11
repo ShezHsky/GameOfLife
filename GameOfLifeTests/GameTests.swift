@@ -14,7 +14,7 @@ struct Game {
     struct Cell: CustomStringConvertible, CustomDebugStringConvertible {
         
         var isAlive = false
-        var index: CellIndex
+        var index: Index
 
         mutating func toggleLiveState() {
             isAlive = !isAlive
@@ -31,7 +31,7 @@ struct Game {
         
     }
     
-    struct CellIndex: Equatable, Hashable, CustomStringConvertible, CustomDebugStringConvertible {
+    struct Index: Equatable, Hashable, CustomStringConvertible, CustomDebugStringConvertible {
         var x: Int
         var y: Int
         
@@ -52,7 +52,7 @@ struct Game {
             return description
         }
         
-        static func ==(lhs: CellIndex, rhs: CellIndex) -> Bool {
+        static func ==(lhs: Index, rhs: Index) -> Bool {
             return lhs.x == rhs.x && lhs.y == rhs.y
         }
         
@@ -72,19 +72,19 @@ struct Game {
         
         (0..<width).forEach { (x) in
             (0..<height).forEach { (y) in
-                let index = Game.CellIndex(x: x, y: y)
+                let index = Game.Index(x: x, y: y)
                 let cell = Cell(isAlive: false, index: index)
                 cells.append(cell)
             }
         }
     }
     
-    func cell(at index: Game.CellIndex) -> Game.Cell {
+    func cell(at index: Game.Index) -> Game.Cell {
         precondition(isValidIndex(index))
         return cells.first(where: { $0.index == index })!
     }
     
-    mutating func toggleCell(at index: Game.CellIndex) {
+    mutating func toggleCell(at index: Game.Index) {
         precondition(isValidIndex(index))
 
         let index = cells.index(where: { $0.index == index })!
@@ -106,7 +106,7 @@ struct Game {
         self.cells = cells
     }
 
-    private func neighbouringIndiciesFor(_ cell: Game.Cell) -> [Game.CellIndex] {
+    private func neighbouringIndiciesFor(_ cell: Game.Cell) -> [Game.Index] {
         let offsets = [(-1, -1), (0, -1), (1, -1),
                        (-1, 0), /* Cell */ (1, 0),
                        (-1, 1), (0, 1), (1, 1)]
@@ -119,7 +119,7 @@ struct Game {
         }
     }
 
-    private func isValidIndex(_ index: Game.CellIndex) -> Bool {
+    private func isValidIndex(_ index: Game.Index) -> Bool {
         return index.x < width && index.y < height
     }
     
@@ -156,7 +156,7 @@ class GameTests: XCTestCase {
         
         (0..<width).forEach { (x) in
             (0..<height).forEach { (y) in
-                let cell = game.cell(at: Game.CellIndex(x: x, y: y))
+                let cell = game.cell(at: Game.Index(x: x, y: y))
                 XCTAssertFalse(cell.isAlive)
             }
         }
@@ -166,7 +166,7 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         game.toggleCell(at: index)
         
         XCTAssertTrue(game.cell(at: index).isAlive)
@@ -176,17 +176,17 @@ class GameTests: XCTestCase {
         let width = 2
         let height = 1
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 0, y: 0)
+        let index = Game.Index(x: 0, y: 0)
         game.toggleCell(at: index)
         
-        XCTAssertFalse(game.cell(at: Game.CellIndex(x: 1, y: 0)).isAlive)
+        XCTAssertFalse(game.cell(at: Game.Index(x: 1, y: 0)).isAlive)
     }
     
     func testAccessingCellShouldProvideItsIndex() {
         let width = 5
         let height = 5
         let game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         let cell = game.cell(at: index)
         
         XCTAssertEqual(index, cell.index)
@@ -196,7 +196,7 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         game.toggleCell(at: index)
         game.tick()
 
@@ -207,9 +207,9 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         game.toggleCell(at: index)
-        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
+        game.toggleCell(at: Game.Index(x: 4, y: 3))
         game.tick()
 
         XCTAssertFalse(game.cell(at: index).isAlive)
@@ -219,10 +219,10 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         game.toggleCell(at: index)
-        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
+        game.toggleCell(at: Game.Index(x: 4, y: 3))
+        game.toggleCell(at: Game.Index(x: 3, y: 4))
         game.tick()
 
         XCTAssertTrue(game.cell(at: index).isAlive)
@@ -232,12 +232,12 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         game.toggleCell(at: index)
-        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 2))
-        game.toggleCell(at: Game.CellIndex(x: 2, y: 3))
+        game.toggleCell(at: Game.Index(x: 4, y: 3))
+        game.toggleCell(at: Game.Index(x: 3, y: 4))
+        game.toggleCell(at: Game.Index(x: 3, y: 2))
+        game.toggleCell(at: Game.Index(x: 2, y: 3))
         game.tick()
 
         XCTAssertFalse(game.cell(at: index).isAlive)
@@ -247,11 +247,11 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
+        let index = Game.Index(x: 3, y: 3)
         game.toggleCell(at: index)
-        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 2))
+        game.toggleCell(at: Game.Index(x: 4, y: 3))
+        game.toggleCell(at: Game.Index(x: 3, y: 4))
+        game.toggleCell(at: Game.Index(x: 3, y: 2))
         game.tick()
 
         XCTAssertTrue(game.cell(at: index).isAlive)
@@ -261,9 +261,9 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
-        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
+        let index = Game.Index(x: 3, y: 3)
+        game.toggleCell(at: Game.Index(x: 4, y: 3))
+        game.toggleCell(at: Game.Index(x: 3, y: 4))
         game.tick()
         
         XCTAssertFalse(game.cell(at: index).isAlive)
@@ -273,10 +273,10 @@ class GameTests: XCTestCase {
         let width = 5
         let height = 5
         var game = Game(width: width, height: height)
-        let index = Game.CellIndex(x: 3, y: 3)
-        game.toggleCell(at: Game.CellIndex(x: 4, y: 3))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 4))
-        game.toggleCell(at: Game.CellIndex(x: 3, y: 2))
+        let index = Game.Index(x: 3, y: 3)
+        game.toggleCell(at: Game.Index(x: 4, y: 3))
+        game.toggleCell(at: Game.Index(x: 3, y: 4))
+        game.toggleCell(at: Game.Index(x: 3, y: 2))
         game.tick()
         
         XCTAssertTrue(game.cell(at: index).isAlive)
